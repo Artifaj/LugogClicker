@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lugog Clicker - Přihlášení</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="lore-intro">
+            <h1>🌲 Lugog Clicker 🌲</h1>
+            <div class="lore-text">
+                <p>Vítej v říši <strong>Lugog</strong>, kde pět vzácných zdrojů čeká na tvé probuzení.</p>
+                <p>Začni klikáním a sbírej <strong>Gooncoiny</strong> - magickou měnu této země.</p>
+                <p>Postupně odemkneš síly <strong>Astma</strong> (inhalátory pro lepší dýchání), <strong>Pohárky</strong> (plné energie), <strong>Mrkev</strong> (posilující sílu) a <strong>Uzené</strong> (nejvzácnější zdroj).</p>
+                <p>Každý zdroj ti pomůže získat mocnější nástroje a automatické generátory, které budou pracovat i když neklikáš.</p>
+                <p>Staň se legendou a dobýj Síň slávy! Kdo nasbírá nejvíce Gooncoinů, stane se vládcem Lugog!</p>
+            </div>
+        </div>
+        
+        <div class="login-box">
+            <h2>Přihlášení</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="text" id="username" placeholder="Uživatelské jméno" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Heslo" required>
+                </div>
+                <button type="submit" class="btn-primary">Přihlásit se</button>
+            </form>
+            <p class="register-link">Nemáš účet? <a href="#" id="registerLink">Registruj se</a></p>
+            <div id="errorMessage" class="error-message"></div>
+        </div>
+        
+        <div class="login-box" id="registerBox" style="display: none;">
+            <h2>Registrace</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <input type="text" id="regUsername" placeholder="Uživatelské jméno" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="regPassword" placeholder="Heslo" required>
+                </div>
+                <button type="submit" class="btn-primary">Registrovat se</button>
+            </form>
+            <p class="register-link">Už máš účet? <a href="#" id="loginLink">Přihlásit se</a></p>
+            <div id="regErrorMessage" class="error-message"></div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+</body>
+</html>
+

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lugog Idle Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/idle.css') }}">
+</head>
+<body>
+    <header class="app-header">
+        <div>
+            <p class="eyebrow">Prototyp ekonomiky</p>
+            <h1>Lugog Idle Engine</h1>
+            <p>Modulární základ pro adventure-communist styl hru. Další větve ekonomiky doplníme postupně.</p>
+        </div>
+        <div class="session-info">
+            <span id="saveStatus">Stav: načítám…</span>
+            <button id="manualSave" class="ghost-button">Uložit teď</button>
+        </div>
+    </header>
+
+    <main class="idle-grid">
+        <section class="panel resource-panel">
+            <div class="panel-header">
+                <h2>Resources</h2>
+                <span id="manualGain" class="tag">+1 / klik</span>
+            </div>
+            <ul id="resourceList" class="resource-list"></ul>
+            <button id="clickButton" class="primary-button">Manifestovat klik</button>
+        </section>
+
+        <section class="panel worker-panel">
+            <div class="panel-header">
+                <h2>Workers</h2>
+                <p>Generují resource automaticky a odemykají se podle ekonomiky.</p>
+            </div>
+            <div id="workerList" class="card-list"></div>
+        </section>
+
+        <section class="panel upgrades-panel">
+            <div class="panel-header">
+                <h2>Upgrady</h2>
+                <p>Zvyšují multiplikátory resources nebo workerů.</p>
+            </div>
+            <div id="upgradeList" class="card-list"></div>
+        </section>
+
+        <section class="panel prestige-panel">
+            <div class="panel-header">
+                <h2>Prestige</h2>
+                <p>Získávej prestižní body podle <code>log10(totalResourcesGenerated)</code>.</p>
+            </div>
+            <div id="prestigeInfo" class="prestige-info">
+                <p>Celkem vygenerováno: <span data-field="totalGenerated">0</span></p>
+                <p>Potenciální prestiž: <span data-field="potentialPrestige">0</span></p>
+                <p>Držené body: <span data-field="ownedPrestige">0</span></p>
+            </div>
+            <button id="prestigeButton" class="danger-button" disabled>Reset a prestiž</button>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/idleEngine.js') }}"></script>
+</body>
+</html>
+
