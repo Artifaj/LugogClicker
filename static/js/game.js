@@ -5,6 +5,12 @@ let gameState = {
     poharky: 0,
     mrkev: 0,
     uzené: 0,
+    logs: 0,
+    planks: 0,
+    grain: 0,
+    flour: 0,
+    bread: 0,
+    fish: 0,
     total_clicks: 0,
     upgrades: {},
     clickValue: 1,
@@ -43,9 +49,16 @@ const MARKET_CURRENCY_LABELS = {
     astma: 'Astma',
     poharky: 'Pohárky',
     mrkev: 'Mrkev',
-    uzené: 'Uzené'
+    uzené: 'Uzené',
+    logs: 'Klády',
+    planks: 'Prkna',
+    grain: 'Obilí',
+    flour: 'Mouka',
+    bread: 'Chleba',
+    fish: 'Ryby'
 };
 
+const SECONDARY_RESOURCES = ['logs', 'planks', 'grain', 'flour', 'bread', 'fish'];
 const RESOURCE_KEYS = ['gooncoins', 'astma', 'poharky', 'mrkev', 'uzené'];
 
 const RESOURCE_LABELS = {
@@ -54,6 +67,12 @@ const RESOURCE_LABELS = {
     poharky: 'Pohárky',
     mrkev: 'Mrkev',
     uzené: 'Uzené',
+    logs: 'Klády',
+    planks: 'Prkna',
+    grain: 'Obilí',
+    flour: 'Mouka',
+    bread: 'Chleba',
+    fish: 'Ryby',
     favor: 'Přízeň'
 };
 
@@ -62,7 +81,13 @@ const CASE_CURRENCY_ICONS = {
     astma: '💨',
     poharky: '🥃',
     mrkev: '🥕',
-    uzené: '🍖'
+    uzené: '🍖',
+    logs: '🪵',
+    planks: '🪚',
+    grain: '🌾',
+    flour: '🧯',
+    bread: '🍞',
+    fish: '🐟'
 };
 
 const CASE_SLOT_WIDTH = 120;
@@ -1725,7 +1750,7 @@ function renderTempleBlessings(blessings = []) {
             if (resource === 'favor') {
                 return favorBalance >= value;
             }
-            return (gameState[resource] || 0) >= value;
+            return getResourceAmount(resource) >= value;
         });
         const disabled = active || cooldownActive || !hasResources;
         const buttonLabel = active ? 'Aktivní' : 'Aktivovat';
@@ -1755,7 +1780,7 @@ function formatTempleCost(cost = {}, favorBalance = 0) {
         const icon = getResourceIcon(resource) || '';
         const affordable = resource === 'favor'
             ? favorBalance >= value
-            : (gameState[resource] || 0) >= value;
+            : getResourceAmount(resource) >= value;
         const chipClass = affordable ? 'resource-chip' : 'resource-chip insufficient';
         return `<span class="${chipClass}">${icon} ${formatCostValue(value)}</span>`;
     }).join('');
@@ -2051,6 +2076,7 @@ async function loadGameState() {
         const response = await fetch('/api/game-state');
         if (response.ok) {
             const data = await response.json();
+            applyResourcePayload(data);
             gameState = { 
                 ...gameState, 
                 gooncoins: data.gooncoins,
@@ -2181,12 +2207,11 @@ function startAutoGeneration() {
             })
             .then(response => response.json())
             .then(data => {
-                if (data.gooncoins !== undefined) {
-                    gameState.gooncoins = data.gooncoins;
-                    gameState.astma = data.astma;
-                    gameState.poharky = data.poharky;
-                    gameState.mrkev = data.mrkev;
-                    gameState.uzené = data.uzené;
+                if (data && typeof data === 'object') {
+                    applyResourcePayload(data);
+                    if (data.generation_rates) {
+                        gameState.generation_rates = data.generation_rates;
+                    }
                     updateResourcesOnly();
                 }
             })
@@ -2208,11 +2233,7 @@ function startAutoGeneration() {
             
             if (response.ok) {
                 const data = await response.json();
-                gameState.gooncoins = data.gooncoins;
-                gameState.astma = data.astma;
-                gameState.poharky = data.poharky;
-                gameState.mrkev = data.mrkev;
-                gameState.uzené = data.uzené;
+                applyResourcePayload(data);
                 if (data.generation_rates) {
                     gameState.generation_rates = data.generation_rates;
                 }
@@ -2364,7 +2385,7 @@ function renderCostPills(costs = {}) {
     return Object.entries(costs)
         .filter(([, cost]) => cost > 0)
         .map(([resource, cost]) => {
-            const currentAmount = Number(gameState[resource] || 0);
+            const currentAmount = getResourceAmount(resource);
             const insufficient = currentAmount < cost;
             return `
                 <span class="cost-item ${insufficient ? 'insufficient' : ''}">
@@ -2414,6 +2435,10 @@ function getResourceLabel(resource) {
     return RESOURCE_LABELS[resource] || resource;
 }
 
+function getResourceAmount(resource) {
+    return Number(gameState?.[resource] || 0);
+}
+
 // Get resource icon
 function getResourceIcon(resource) {
     const icons = {
@@ -2422,6 +2447,12 @@ function getResourceIcon(resource) {
         poharky: '🥃',
         mrkev: '🥕',
         uzené: '🍖',
+        logs: '🪵',
+        planks: '🪚',
+        grain: '🌾',
+        flour: '🧯',
+        bread: '🍞',
+        fish: '🐟',
         favor: '🔱'
     };
     return icons[resource] || '';
@@ -2457,11 +2488,7 @@ async function buyUpgrade(upgradeType) {
         
         const data = await response.json();
         if (data.success) {
-            gameState.gooncoins = data.gooncoins;
-            gameState.astma = data.astma;
-            gameState.poharky = data.poharky;
-            gameState.mrkev = data.mrkev;
-            gameState.uzené = data.uzené;
+            applyResourcePayload(data);
             gameState.upgrades[upgradeType] = data.new_level;
             
             // Recalculate click value
@@ -2738,7 +2765,7 @@ function showCraftDetail(itemId) {
 
 function canAffordCraft(cost) {
     return Object.entries(cost).every(([resource, amount]) => 
-        gameState[resource] >= amount
+        getResourceAmount(resource) >= amount
     );
 }
 
@@ -2788,13 +2815,18 @@ function loadBuildings() {
     buildingsList.innerHTML = '';
     
     const unlocked = gameState.story?.unlocked_buildings || [];
+    const builtMap = gameState.buildings || {};
     
     for (const [id, def] of Object.entries(buildingsDefs)) {
         const item = document.createElement('div');
         item.className = 'building-item';
         
-        const isBuilt = gameState.buildings?.[id] > 0;
-        const isUnlocked = id === 'workshop' || unlocked.includes(id);
+        const isBuilt = builtMap?.[id] > 0;
+        const prerequisites = def.prerequisites || [];
+        const missingPrereqs = prerequisites.filter(req => (builtMap?.[req] || 0) <= 0);
+        const prereqsMet = missingPrereqs.length === 0;
+        const isUnlocked = id === 'workshop' || def.always_available || unlocked.includes(id);
+        const canBuildNow = isUnlocked && prereqsMet && !isBuilt;
         
         if (!isUnlocked) {
             item.classList.add('locked');
@@ -2802,16 +2834,24 @@ function loadBuildings() {
         
         const baseCost = def.cost;
         const effectiveCost = applyInflationToCostMap(baseCost);
-        const canAfford = isUnlocked && canAffordCraft(effectiveCost);
+        const hasResources = canAffordCraft(effectiveCost);
+        const canAfford = canBuildNow && hasResources;
+        let lockReason = '';
+        if (!isUnlocked) {
+            lockReason = 'Ještě není odemčeno';
+        } else if (!prereqsMet) {
+            const names = missingPrereqs.map(req => buildingsDefs[req]?.name || req);
+            lockReason = `Nejdřív postav: ${names.join(', ')}`;
+        }
         
         item.innerHTML = `
             <h4>${def.name} ${isBuilt ? '(Postaveno)' : ''}</h4>
             <p>${def.description}</p>
-            ${!isUnlocked ? '<p style="color: #f44336;">Ještě není odemčeno</p>' : ''}
+            ${lockReason ? `<p class="building-lock" style="color:#f44336;">${lockReason}</p>` : ''}
             ${!isBuilt ? `
                 <div class="upgrade-cost">
                     ${Object.entries(effectiveCost).filter(([_, c]) => c > 0).map(([resource, c]) => 
-                        `<span class="cost-item ${gameState[resource] < c ? 'insufficient' : ''}">
+                        `<span class="cost-item ${getResourceAmount(resource) < c ? 'insufficient' : ''}">
                             ${getResourceIcon(resource)} ${formatCostValue(c)}
                         </span>`
                     ).join('')}
@@ -2837,9 +2877,7 @@ async function buildBuilding(buildingType) {
         if (response.ok) {
             const data = await response.json();
             if (data.success) {
-                gameState.gooncoins = data.gooncoins;
-                gameState.astma = data.astma;
-                gameState.poharky = data.poharky;
+                applyResourcePayload(data);
                 if (!gameState.buildings) gameState.buildings = {};
                 gameState.buildings[buildingType] = 1;
                 updateDisplay();
@@ -2972,11 +3010,7 @@ async function completeQuest(questId) {
         
         const data = await response.json();
         if (data.success) {
-            gameState.gooncoins = data.gooncoins;
-            gameState.astma = data.astma;
-            if (data.poharky !== undefined) gameState.poharky = data.poharky;
-            if (data.mrkev !== undefined) gameState.mrkev = data.mrkev;
-            if (data.uzené !== undefined) gameState.uzené = data.uzené;
+            applyResourcePayload(data);
             if (data.unlocked_currencies) {
                 if (!gameState.story) gameState.story = {};
                 gameState.story.unlocked_currencies = data.unlocked_currencies;

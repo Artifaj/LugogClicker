@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lugog Clicker - Admin Panel</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="admin-page">
+    <div class="admin-wrapper">
+        <header class="admin-header">
+            <div>
+                <h1>🛠️ Admin Panel</h1>
+                <p>Vítej, {{ username }}. Tady můžeš sledovat statistiky a skrývat účty z leaderboardu.</p>
+            </div>
+            <div class="admin-header-actions">
+                <a href="{{ url_for('game') }}" class="btn-blue btn-small">← Zpět do hry</a>
+                <a href="/logout" class="btn-logout-small">Odhlásit</a>
+            </div>
+        </header>
+        
+        <section class="admin-summary-grid" id="adminSummary">
+            <div class="summary-card">
+                <span>Počet hráčů</span>
+                <strong id="totalUsers">0</strong>
+            </div>
+            <div class="summary-card">
+                <span>Aktivní hráči</span>
+                <strong id="activePlayers">0</strong>
+            </div>
+            <div class="summary-card">
+                <span>Skrytí z leaderboardu</span>
+                <strong id="hiddenPlayers">0</strong>
+            </div>
+            <div class="summary-card">
+                <span>Celkové Gooncoiny</span>
+                <strong id="totalGooncoins">0</strong>
+            </div>
+            <div class="summary-card">
+                <span>Průměr na hráče</span>
+                <strong id="averageGooncoins">0</strong>
+            </div>
+        </section>
+        
+        <section class="admin-recent">
+            <div class="section-header">
+                <h2>📅 Nově registrovaní</h2>
+                <button id="refreshAdminDataTop" class="btn-refresh" title="Obnovit data">↻</button>
+            </div>
+            <ul id="recentUsersList" class="recent-users-list">
+                <li>Načítám data...</li>
+            </ul>
+        </section>
+        
+        <section class="admin-table-section">
+            <div class="section-header">
+                <h2>👥 Správa hráčů</h2>
+                <div class="admin-table-tools">
+                    <input type="text" id="adminSearch" placeholder="Hledej podle jména">
+                    <button id="refreshAdminData" class="btn-refresh" title="Obnovit data">↻</button>
+                </div>
+            </div>
+            <div id="adminMessage" class="admin-message muted">Vyber hráče pro správu.</div>
+            <div class="table-scroll">
+                <table class="admin-table" id="adminUsersTable">
+                    <thead>
+                        <tr>
+                            <th>Jméno</th>
+                            <th>Gooncoiny</th>
+                            <th>Kliky</th>
+                            <th>Role</th>
+                            <th>Leaderboard</th>
+                            <th>Akce</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">Načítám hráče...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>
+

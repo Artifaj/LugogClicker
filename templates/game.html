@@ -28,6 +28,9 @@
         </div>
         <div class="user-info-top">
             <span id="usernameDisplay">{{ username }}</span>
+            {% if is_admin %}
+            <a href="{{ url_for('admin_panel') }}" class="btn-admin-small">Admin panel</a>
+            {% endif %}
             <a href="/logout" class="btn-logout-small">Odhlásit</a>
         </div>
     </div>

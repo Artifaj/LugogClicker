@@ -31,6 +31,13 @@ python app.py
 
 4. **Otevři prohlížeč** a jdi na `http://localhost:5000`
 
+## 🛡️ Admin panel pro testování
+
+- Výchozí admin účet: **uživatel `Ota`, heslo `Ota`** (lze změnit přes proměnné `LUGOG_ADMIN_USER` a `LUGOG_ADMIN_PASS`).
+- Po přihlášení klikni na tlačítko **Admin panel** v horní liště (nebo navštiv `/admin`) a uvidíš přehled hráčů, statistiky a přepínač viditelnosti v síni slávy.
+- Admin účet je automaticky **skrytý z leaderboardu**, takže můžeš testovat bez ovlivnění žebříčku.
+- V Admin panelu můžeš kdykoliv skrýt nebo odkrýt libovolného hráče z výsledkové tabulky.
+
 ## 📦 Nasazení na web
 
 Pro nasazení na produkční server (např. Heroku, Railway, nebo vlastní VPS):

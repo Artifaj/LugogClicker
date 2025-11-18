@@ -6,6 +6,7 @@ import json
 from datetime import datetime, timedelta
 import os
 import random
+from functools import wraps
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
@@ -118,7 +119,13 @@ RESOURCE_LABELS_BACKEND = {
     'astma': 'Astma',
     'poharky': 'Pohárky',
     'mrkev': 'Mrkev',
-    'uzené': 'Uzené'
+    'uzené': 'Uzené',
+    'logs': 'Klády',
+    'planks': 'Prkna',
+    'grain': 'Obilí',
+    'flour': 'Mouka',
+    'bread': 'Chleba',
+    'fish': 'Ryby'
 }
 
 RESOURCE_ALIAS_MAP = {
@@ -129,26 +136,32 @@ RESOURCE_ALIAS_MAP = {
 }
 
 def hydrate_state_resources(row):
+    base = {key: 0.0 for key in RESOURCE_FIELDS}
     if not row:
-        return {key: 0 for key in ['gooncoins', 'astma', 'poharky', 'mrkev', 'uzené']}
-    resources = {
-        'gooncoins': float(row['gooncoins']) if row['gooncoins'] is not None else 0
-    }
-    for key, aliases in RESOURCE_ALIAS_MAP.items():
-        value = 0
-        for alias in aliases:
-            if alias in row.keys() and row[alias] is not None:
-                value = row[alias]
-                break
-        resources[key] = float(value)
-    return resources
+        return base
+    if hasattr(row, 'keys'):
+        mapping = {key: row[key] for key in row.keys()}
+    elif isinstance(row, dict):
+        mapping = row
+    else:
+        return base
+    for key in RESOURCE_FIELDS:
+        value = mapping.get(key)
+        if value is None and key in RESOURCE_ALIAS_MAP:
+            for alias in RESOURCE_ALIAS_MAP[key]:
+                if alias in mapping and mapping[alias] is not None:
+                    value = mapping[alias]
+                    break
+        if value is None and key in RESOURCE_FALLBACKS:
+            fallback = RESOURCE_FALLBACKS.get(key)
+            if fallback:
+                value = mapping.get(fallback)
+        base[key] = float(value if value is not None else 0)
+    return base
+
 
 def persist_state_resources(cursor, user_id, balances):
-    cursor.execute('''UPDATE game_state 
-                      SET gooncoins = ?, astma = ?, poharky = ?, mrkev = ?, uzené = ?, last_update = CURRENT_TIMESTAMP
-                      WHERE user_id = ?''',
-                   (balances['gooncoins'], balances['astma'], balances['poharky'],
-                    balances['mrkev'], balances['uzené'], user_id))
+    persist_resources(cursor, user_id, balances)
 
 CAMPAIGN_MONSTERS = [
     {
@@ -328,6 +341,14 @@ def init_db():
                   username TEXT UNIQUE NOT NULL,
                   password_hash TEXT NOT NULL,
                   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
+    for column, ddl in [
+        ('is_admin', 'INTEGER DEFAULT 0'),
+        ('hide_from_leaderboard', 'INTEGER DEFAULT 0')
+    ]:
+        try:
+            c.execute(f'ALTER TABLE users ADD COLUMN {column} {ddl}')
+        except sqlite3.OperationalError:
+            pass
     
     # Game state table
     c.execute('''CREATE TABLE IF NOT EXISTS game_state
@@ -337,27 +358,22 @@ def init_db():
                   poharky REAL DEFAULT 0,
                   mrkev REAL DEFAULT 0,
                   uzené REAL DEFAULT 0,
+                  logs REAL DEFAULT 0,
+                  planks REAL DEFAULT 0,
+                  grain REAL DEFAULT 0,
+                  flour REAL DEFAULT 0,
+                  bread REAL DEFAULT 0,
+                  fish REAL DEFAULT 0,
                   last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                   total_clicks INTEGER DEFAULT 0,
                   FOREIGN KEY (user_id) REFERENCES users(id))''')
     
-    # Migration: rename old columns if they exist
-    try:
-        c.execute('ALTER TABLE game_state ADD COLUMN astma REAL DEFAULT 0')
-    except:
-        pass
-    try:
-        c.execute('ALTER TABLE game_state ADD COLUMN poharky REAL DEFAULT 0')
-    except:
-        pass
-    try:
-        c.execute('ALTER TABLE game_state ADD COLUMN mrkev REAL DEFAULT 0')
-    except:
-        pass
-    try:
-        c.execute('ALTER TABLE game_state ADD COLUMN uzené REAL DEFAULT 0')
-    except:
-        pass
+    # Migration: ensure all resource columns exist (older DBs may miss them)
+    for column in ['astma', 'poharky', 'mrkev', 'uzené', *SECONDARY_RESOURCES]:
+        try:
+            c.execute(f'ALTER TABLE game_state ADD COLUMN "{column}" REAL DEFAULT 0')
+        except sqlite3.OperationalError:
+            pass
     
     # Upgrades table
     c.execute('''CREATE TABLE IF NOT EXISTS upgrades
@@ -502,12 +518,59 @@ def init_db():
     conn.commit()
     conn.close()
 
+def ensure_admin_account():
+    """
+    Create or refresh a default admin testing account so that we always
+    have a dedicated profile which can be hidden from the leaderboard.
+    """
+    admin_username = os.environ.get('LUGOG_ADMIN_USER', 'Ota')
+    admin_password = os.environ.get('LUGOG_ADMIN_PASS', 'Ota')
+    password_hash = generate_password_hash(admin_password)
+    
+    conn = sqlite3.connect('lugog_clicker.db')
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    c.execute('SELECT id FROM users WHERE username = ?', (admin_username,))
+    user = c.fetchone()
+    
+    if user:
+        user_id = user['id']
+        c.execute('''UPDATE users
+                     SET password_hash = ?, is_admin = 1, hide_from_leaderboard = 1
+                     WHERE id = ?''', (password_hash, user_id))
+    else:
+        c.execute('''INSERT INTO users (username, password_hash, is_admin, hide_from_leaderboard)
+                     VALUES (?, ?, 1, 1)''', (admin_username, password_hash))
+        user_id = c.lastrowid
+    
+    c.execute('''INSERT OR IGNORE INTO game_state
+                 (user_id, gooncoins, astma, poharky, mrkev, uzené)
+                 VALUES (?, 0, 0, 0, 0, 0)''', (user_id,))
+    c.execute('''INSERT OR IGNORE INTO story_progress
+                 (user_id, current_chapter, completed_quests, unlocked_buildings, unlocked_currencies)
+                 VALUES (?, 1, '[]', '[]', '["gooncoins"]')''', (user_id,))
+    c.execute('INSERT OR IGNORE INTO rare_materials (user_id) VALUES (?)', (user_id,))
+    c.execute('INSERT OR IGNORE INTO combat_profiles (user_id) VALUES (?)', (user_id,))
+    
+    conn.commit()
+    conn.close()
+
 init_db()
+ensure_admin_account()
 
 def get_db():
     conn = sqlite3.connect('lugog_clicker.db')
     conn.row_factory = sqlite3.Row
     return conn
+
+def admin_api_required(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        if 'user_id' not in session or not session.get('is_admin'):
+            return jsonify({'error': 'Admin access required'}), 403
+        return func(*args, **kwargs)
+    return wrapper
 
 def ensure_economy_row(cursor):
     cursor.execute('''INSERT OR IGNORE INTO economy_state (id, gooncoin_supply, inflation_rate, last_adjustment)
@@ -1313,13 +1376,14 @@ def login():
         
         conn = get_db()
         c = conn.cursor()
-        c.execute('SELECT id, password_hash FROM users WHERE username = ?', (username,))
+        c.execute('SELECT id, password_hash, is_admin FROM users WHERE username = ?', (username,))
         user = c.fetchone()
         conn.close()
         
         if user and check_password_hash(user['password_hash'], password):
             session['user_id'] = user['id']
             session['username'] = username
+            session['is_admin'] = bool(user['is_admin'])
             return jsonify({'success': True})
         else:
             return jsonify({'success': False, 'error': 'Neplatné přihlašovací údaje'})
@@ -1361,6 +1425,7 @@ def register():
         conn.commit()
         session['user_id'] = user_id
         session['username'] = username
+        session['is_admin'] = False
         conn.close()
         return jsonify({'success': True})
     except sqlite3.IntegrityError:
@@ -1371,7 +1436,9 @@ def register():
 def game():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    return render_template('game.html', username=session.get('username', 'Hráč'))
+    return render_template('game.html',
+                           username=session.get('username', 'Hráč'),
+                           is_admin=session.get('is_admin', False))
 
 @app.route('/api/game-state')
 def get_game_state():
@@ -1725,6 +1792,7 @@ def leaderboard():
     c.execute('''SELECT u.username, gs.gooncoins, gs.total_clicks
                  FROM users u
                  JOIN game_state gs ON u.id = gs.user_id
+                 WHERE COALESCE(u.hide_from_leaderboard, 0) = 0
                  ORDER BY gs.gooncoins DESC
                  LIMIT 10''')
     
@@ -1735,6 +1803,89 @@ def leaderboard():
     
     conn.close()
     return jsonify(leaders)
+
+@app.route('/admin')
+def admin_panel():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    if not session.get('is_admin'):
+        return redirect(url_for('game'))
+    return render_template('admin.html',
+                           username=session.get('username', 'Admin'),
+                           is_admin=True)
+
+@app.route('/api/admin/overview')
+@admin_api_required
+def admin_overview():
+    conn = get_db()
+    c = conn.cursor()
+    
+    c.execute('SELECT COUNT(*) as count FROM users')
+    total_users = c.fetchone()['count']
+    
+    c.execute('SELECT COUNT(*) as count FROM users WHERE COALESCE(hide_from_leaderboard, 0) = 1')
+    hidden_players = c.fetchone()['count']
+    
+    c.execute('''SELECT COUNT(*) as count FROM game_state
+                 WHERE COALESCE(gooncoins, 0) > 0 OR COALESCE(total_clicks, 0) > 0''')
+    active_players = c.fetchone()['count']
+    
+    c.execute('SELECT COALESCE(SUM(gooncoins), 0) as total_gooncoins, '
+              'COALESCE(AVG(gooncoins), 0) as average_gooncoins FROM game_state')
+    totals_row = c.fetchone()
+    total_gooncoins = totals_row['total_gooncoins'] if totals_row else 0
+    average_gooncoins = totals_row['average_gooncoins'] if totals_row else 0
+    
+    c.execute('''SELECT u.id, u.username, u.created_at,
+                        COALESCE(u.is_admin, 0) as is_admin,
+                        COALESCE(u.hide_from_leaderboard, 0) as hide_from_leaderboard,
+                        COALESCE(gs.gooncoins, 0) as gooncoins,
+                        COALESCE(gs.total_clicks, 0) as total_clicks
+                 FROM users u
+                 LEFT JOIN game_state gs ON u.id = gs.user_id
+                 ORDER BY gooncoins DESC, u.created_at ASC''')
+    users = [{
+        'id': row['id'],
+        'username': row['username'],
+        'created_at': row['created_at'],
+        'is_admin': bool(row['is_admin']),
+        'hidden': bool(row['hide_from_leaderboard']),
+        'gooncoins': row['gooncoins'],
+        'total_clicks': row['total_clicks']
+    } for row in c.fetchall()]
+    
+    c.execute('SELECT username, created_at FROM users ORDER BY created_at DESC LIMIT 5')
+    recent_users = [{
+        'username': row['username'],
+        'created_at': row['created_at']
+    } for row in c.fetchall()]
+    
+    conn.close()
+    return jsonify({
+        'total_users': total_users,
+        'active_players': active_players,
+        'hidden_players': hidden_players,
+        'total_gooncoins': total_gooncoins,
+        'average_gooncoins': average_gooncoins,
+        'recent_users': recent_users,
+        'users': users
+    })
+
+@app.route('/api/admin/users/<int:user_id>/leaderboard', methods=['POST'])
+@admin_api_required
+def set_leaderboard_visibility(user_id):
+    data = request.get_json() or {}
+    hide = bool(data.get('hide', True))
+    
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('UPDATE users SET hide_from_leaderboard = ? WHERE id = ?', (1 if hide else 0, user_id))
+    if c.rowcount == 0:
+        conn.close()
+        return jsonify({'error': 'Uživatel nebyl nalezen'}), 404
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True, 'user_id': user_id, 'hidden': hide})
 
 # Equipment definitions - using actual image filenames from obrazky folder
 # unlock_requirement: {'equipment_id': count} - odemkne se když máš X kusů daného equipmentu
@@ -2228,6 +2379,7 @@ BUILDINGS_DEFS = {
         'name': 'Pila',
         'description': 'Z klád vyrábí prkna. Potřebuje stejnou cestu tam i zpět.',
         'cost': {'gooncoins': 250, 'logs': 10},
+        'always_available': True,
         'prerequisites': ['lumberjack_hut', 'forest_route'],
         'logistics': {
             'kind': 'process',
@@ -2245,6 +2397,7 @@ BUILDINGS_DEFS = {
         'name': 'Trámy k výtahu',
         'description': 'Krátké rameno, které odvádí prkna do paneláku.',
         'cost': {'gooncoins': 140, 'logs': 8},
+        'always_available': True,
         'prerequisites': ['sawmill'],
         'logistics': {
             'kind': 'route',
@@ -2258,6 +2411,7 @@ BUILDINGS_DEFS = {
         'name': 'Farma na obilí',
         'description': 'Farmář pěstuje obilí a posílá pytle po vyznačených trasách.',
         'cost': {'gooncoins': 180},
+        'always_available': True,
         'prerequisites': ['lumberjack_hut'],
         'logistics': {
             'kind': 'process',
@@ -2274,6 +2428,7 @@ BUILDINGS_DEFS = {
         'name': 'Polní rozcestí',
         'description': 'Zajišťuje přenos pytlů s obilím směrem do mlýna.',
         'cost': {'gooncoins': 150},
+        'always_available': True,
         'prerequisites': ['farmstead'],
         'logistics': {
             'kind': 'route',
@@ -2287,6 +2442,7 @@ BUILDINGS_DEFS = {
         'name': 'Mlýn',
         'description': 'Z obilí mele mouku, když dorazí pytle a cesta je průchozí.',
         'cost': {'gooncoins': 260, 'grain': 10},
+        'always_available': True,
         'prerequisites': ['farmstead', 'field_route'],
         'logistics': {
             'kind': 'process',
@@ -2304,6 +2460,7 @@ BUILDINGS_DEFS = {
         'name': 'Křižovatka pro pekárnu',
         'description': 'Uzly, kde se potkává mouka, voda a uhlí. Každý směr je vidět.',
         'cost': {'gooncoins': 160, 'planks': 4},
+        'always_available': True,
         'prerequisites': ['mill'],
         'logistics': {
             'kind': 'route',
@@ -2317,6 +2474,7 @@ BUILDINGS_DEFS = {
         'name': 'Pekárna',
         'description': 'Pekař čeká, dokud mouka reálně nedorazí. Pak upeče chleba.',
         'cost': {'gooncoins': 320, 'flour': 6},
+        'always_available': True,
         'prerequisites': ['bakery_route'],
         'logistics': {
             'kind': 'process',
@@ -2334,6 +2492,7 @@ BUILDINGS_DEFS = {
         'name': 'Rybářská chata',
         'description': 'Rybář chytá ryby a nosiči je nosí po molu nahoru.',
         'cost': {'gooncoins': 210, 'planks': 4},
+        'always_available': True,
         'prerequisites': ['plank_route'],
         'logistics': {
             'kind': 'process',
@@ -2350,6 +2509,7 @@ BUILDINGS_DEFS = {
         'name': 'Přístavní molo',
         'description': 'Segmenty mola, které dovedou košíky z vody až na střechu.',
         'cost': {'gooncoins': 130, 'planks': 4},
+        'always_available': True,
         'prerequisites': ['fishery'],
         'logistics': {
             'kind': 'route',
@@ -2363,6 +2523,7 @@ BUILDINGS_DEFS = {
         'name': 'Cech nosičů',
         'description': 'Přidává na každou cestu dalšího nosiče. Level = počet směn denně.',
         'cost': {'gooncoins': 280, 'planks': 6, 'bread': 2},
+        'always_available': True,
         'prerequisites': ['forest_route'],
         'repeatable': True,
         'max_level': 5,
@@ -2986,7 +3147,7 @@ def build_building():
     if 'user_id' not in session:
         return jsonify({'error': 'Not authenticated'}), 401
     
-    data = request.get_json()
+    data = request.get_json() or {}
     building_type = data.get('building_type')
     
     if building_type not in BUILDINGS_DEFS:
@@ -2999,51 +3160,59 @@ def build_building():
     # Get current state and story
     c.execute('SELECT * FROM game_state WHERE user_id = ?', (user_id,))
     state = c.fetchone()
+    if not state:
+        conn.close()
+        return jsonify({'success': False, 'error': 'Game state nenalezen'}), 404
     
     story = ensure_story_progress(c, user_id)
-    
+    unlocked_buildings = json.loads(story['unlocked_buildings']) if story and story['unlocked_buildings'] else []
     building_def = BUILDINGS_DEFS[building_type]
+    prerequisites = building_def.get('prerequisites', [])
+    
+    c.execute('SELECT building_type, level FROM buildings WHERE user_id = ?', (user_id,))
+    player_buildings = {row['building_type']: row['level'] for row in c.fetchall()}
+    if player_buildings.get(building_type, 0) > 0:
+        conn.close()
+        return jsonify({'success': False, 'error': 'Budova již je postavena'})
+    
+    missing_prereq = next((req for req in prerequisites if player_buildings.get(req, 0) <= 0), None)
+    if missing_prereq:
+        conn.close()
+        missing_label = BUILDINGS_DEFS.get(missing_prereq, {}).get('name', missing_prereq)
+        return jsonify({'success': False, 'error': f'Nejdřív postav {missing_label}'})
+    
+    is_workshop = building_type == 'workshop'
+    is_always_available = building_def.get('always_available', False)
+    is_story_unlocked = building_type in unlocked_buildings
+    if not (is_workshop or is_always_available or is_story_unlocked):
+        conn.close()
+        return jsonify({'success': False, 'error': 'Budova ještě není odemčena'})
+    
+    resources = extract_player_resources(state)
     cost = building_def['cost']
     inflation_rate = get_current_inflation_rate(c)
     inflation_multiplier = calculate_inflation_multiplier(inflation_rate)
     effective_cost = apply_inflation_to_cost(cost, inflation_multiplier)
     
-    # Check if already built
-    c.execute('SELECT level FROM buildings WHERE user_id = ? AND building_type = ?', (user_id, building_type))
-    existing = c.fetchone()
-    if existing and existing['level'] > 0:
+    lacking_resource = next(
+        (resource for resource, amount in (effective_cost or {}).items()
+         if amount and resources.get(resource, 0) < amount),
+        None
+    )
+    if lacking_resource:
         conn.close()
-        return jsonify({'success': False, 'error': 'Budova již je postavena'})
+        label = RESOURCE_LABELS_BACKEND.get(lacking_resource, lacking_resource)
+        return jsonify({'success': False, 'error': f'Nemáte dostatek: {label}'})
     
-    # Check if unlocked
-    unlocked_buildings = json.loads(story['unlocked_buildings']) if story and story['unlocked_buildings'] else []
-    if building_type not in unlocked_buildings and building_type != 'workshop':  # workshop is always available
-        conn.close()
-        return jsonify({'success': False, 'error': 'Budova ještě není odemčena'})
-    
-    # Check if can afford
-    current_astma = state['astma'] if 'astma' in state.keys() else (state['wood'] if 'wood' in state.keys() else 0)
-    current_poharky = state['poharky'] if 'poharky' in state.keys() else (state['water'] if 'water' in state.keys() else 0)
-    
-    if (state['gooncoins'] < effective_cost.get('gooncoins', 0) or
-        current_astma < effective_cost.get('astma', 0) or
-        current_poharky < effective_cost.get('poharky', 0)):
-        conn.close()
-        return jsonify({'success': False, 'error': 'Nemáte dostatek zdrojů'})
-    
-    # Deduct costs and build
-    new_gooncoins = state['gooncoins'] - effective_cost.get('gooncoins', 0)
-    new_astma = current_astma - effective_cost.get('astma', 0)
-    new_poharky = current_poharky - effective_cost.get('poharky', 0)
+    for resource, amount in (effective_cost or {}).items():
+        if not amount:
+            continue
+        resources[resource] = resources.get(resource, 0) - amount
     
     c.execute('INSERT INTO buildings (user_id, building_type, level) VALUES (?, ?, 1)',
              (user_id, building_type))
     
-    # Update game state
-    c.execute('''UPDATE game_state 
-                 SET gooncoins = ?, astma = ?, poharky = ?, last_update = CURRENT_TIMESTAMP
-                 WHERE user_id = ?''',
-             (new_gooncoins, new_astma, new_poharky, user_id))
+    persist_resources(c, user_id, resources)
     
     conn.commit()
     conn.close()
@@ -3052,9 +3221,8 @@ def build_building():
     
     return jsonify({
         'success': True,
-        'gooncoins': new_gooncoins,
-        'astma': new_astma,
-        'poharky': new_poharky
+        **resources_payload(resources),
+        'building_type': building_type
     })
 
 @app.route('/api/currency-market', methods=['GET', 'POST'])
