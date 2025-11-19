@@ -1805,6 +1805,13 @@ body.nav-open .mobile-nav-overlay {
     align-items: flex-start;
 }
 
+@media (max-width: 768px) {
+    .shop-container {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+}
+
 .crafting-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -1816,6 +1823,21 @@ body.nav-open .mobile-nav-overlay {
     border: 1px solid rgba(138, 43, 226, 0.1);
     align-items: center;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 768px) {
+    .crafting-toolbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .crafting-search-input,
+    .crafting-filter-select,
+    .crafting-sort {
+        width: 100% !important;
+        flex: 0 0 auto !important;
+    }
 }
 
 .crafting-search-input,
@@ -1947,6 +1969,14 @@ body.nav-open .mobile-nav-overlay {
     max-height: calc(100vh - 200px);
     overflow-y: auto;
     padding-right: 8px;
+}
+
+@media (max-width: 768px) {
+    .crafting-list {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
 }
 
 .crafting-list::-webkit-scrollbar {
@@ -2303,6 +2333,14 @@ body.nav-open .mobile-nav-overlay {
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+}
+
+.craft-detail-header h3 {
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    line-height: 1.2;
 }
 
 .craft-detail-owned {
@@ -8974,39 +9012,84 @@ body.nav-open .mobile-nav-overlay {
         order: 3 !important;
     }
     
-    /* Crafting - force vertical layout */
+    /* Crafting - force vertical layout - MAXIMUM AGGRESSION */
     #crafting-tab .shop-container,
-    #crafting-tab.mobile-view .shop-container {
+    #crafting-tab.mobile-view .shop-container,
+    body #crafting-tab .shop-container {
+        display: flex !important;
         flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: stretch !important;
+        gap: 20px !important;
     }
     
     #crafting-tab .crafting-list,
-    #crafting-tab.mobile-view .crafting-list {
+    #crafting-tab.mobile-view .crafting-list,
+    body #crafting-tab .crafting-list {
+        display: flex !important;
+        flex-direction: column !important;
         flex: none !important;
         flex-basis: auto !important;
+        flex-grow: 0 !important;
+        flex-shrink: 0 !important;
         width: 100% !important;
+        max-width: 100% !important;
         min-width: 0 !important;
+        min-height: 300px !important;
+        max-height: 400px !important;
     }
     
     #crafting-tab .crafting-detail,
-    #crafting-tab.mobile-view .crafting-detail {
+    #crafting-tab.mobile-view .crafting-detail,
+    body #crafting-tab .crafting-detail {
+        display: block !important;
         flex: none !important;
+        flex-basis: auto !important;
         width: 100% !important;
+        max-width: 100% !important;
         min-width: 0 !important;
     }
     
     #crafting-tab .crafting-toolbar,
-    #crafting-tab.mobile-view .crafting-toolbar {
+    #crafting-tab.mobile-view .crafting-toolbar,
+    body #crafting-tab .crafting-toolbar {
+        display: flex !important;
         flex-direction: column !important;
+        flex-wrap: nowrap !important;
         align-items: stretch !important;
+        gap: 10px !important;
     }
     
     #crafting-tab .crafting-search-input,
     #crafting-tab .crafting-filter-select,
     #crafting-tab.mobile-view .crafting-search-input,
-    #crafting-tab.mobile-view .crafting-filter-select {
+    #crafting-tab.mobile-view .crafting-filter-select,
+    body #crafting-tab .crafting-search-input,
+    body #crafting-tab .crafting-filter-select {
+        display: block !important;
         flex: none !important;
         width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    #crafting-tab .crafting-sort,
+    #crafting-tab.mobile-view .crafting-sort,
+    body #crafting-tab .crafting-sort {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    #crafting-tab .crafting-legend,
+    #crafting-tab.mobile-view .crafting-legend,
+    body #crafting-tab .crafting-legend {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        width: 100% !important;
+        gap: 6px !important;
     }
     
     #combat-tab #campaignFightButton,
@@ -9213,4 +9296,54 @@ body.nav-open .mobile-nav-overlay {
 
 .custom-alert-modal.info .custom-alert-header {
     background: linear-gradient(135deg, #2196f3, #64b5f6);
+}
+
+/* ========== ULTIMATE MOBILE FIX - ABSOLUTE LAST RESORT ========== */
+@media screen and (max-width: 768px) {
+    /* Force crafting to be vertical - NO EXCEPTIONS */
+    .main-content #crafting-tab .shop-container {
+        display: flex !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: stretch !important;
+    }
+    
+    .main-content #crafting-tab .crafting-list {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    .main-content #crafting-tab .crafting-detail {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+    
+    .main-content #crafting-tab .crafting-toolbar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .main-content #crafting-tab .crafting-search-input,
+    .main-content #crafting-tab .crafting-filter-select,
+    .main-content #crafting-tab .crafting-sort {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 auto !important;
+    }
+    
+    /* Force combat to be vertical */
+    .main-content #combat-tab .combat-visual {
+        flex-direction: column !important;
+        align-items: center !important;
+    }
+    
+    .main-content #combat-tab .fighter {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        max-width: 280px !important;
+    }
 }
