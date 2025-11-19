@@ -172,5 +172,5 @@ Pokud najdeš nějaké chyby nebo máš návrhy na vylepšení, vytvoř issue ne
 
 ---
 
-**Užij si hru a dobýj říši Lugog! 🌲✨**
+**Užij si hru a dobyj říši Lugog! 🌲✨**
 

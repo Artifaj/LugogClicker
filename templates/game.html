@@ -20,10 +20,7 @@
             </button>
             <div class="status-resources">
             <span class="resource-status" id="gooncoinsStatus">💰 <span id="gooncoinsValue">0</span> (+0/s)</span>
-            <span class="resource-status" id="astmaStatus">💨 <span id="astmaValue">0</span></span>
-            <span class="resource-status" id="poharkyStatus">🥃 <span id="poharkyValue">0</span></span>
-            <span class="resource-status" id="mrkevStatus">🥕 <span id="mrkevValue">0</span></span>
-            <span class="resource-status" id="uzenéStatus">🍖 <span id="uzenéValue">0</span></span>
+            <span class="resource-status gems-status" id="gemsStatus">💎 <span id="gemsValueTop">0</span></span>
             </div>
         </div>
         <div class="user-info-top">
@@ -56,11 +53,6 @@
                     <span>Výroba</span>
                     <span class="nav-arrow">→</span>
                 </li>
-                <li class="nav-item" data-tab="equipment">
-                    <span class="nav-icon">🛡️</span>
-                    <span>Equipment</span>
-                    <span class="nav-arrow">→</span>
-                </li>
                 <li class="nav-item" data-tab="inventory">
                     <span class="nav-icon">🎒</span>
                     <span>Inventář</span>
@@ -76,14 +68,69 @@
                     <span>Budovy</span>
                     <span class="nav-arrow">→</span>
                 </li>
+                <li class="nav-item" data-tab="gems">
+                    <span class="nav-icon">💎</span>
+                    <span>Drahokamy</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="economy">
+                    <span class="nav-icon">💹</span>
+                    <span>Ekonomika</span>
+                    <span class="nav-arrow">→</span>
+                </li>
                 <li class="nav-item" data-tab="cases">
                     <span class="nav-icon">🎁</span>
                     <span>Bedny</span>
                     <span class="nav-arrow">→</span>
                 </li>
+                <li class="nav-item" data-tab="shop">
+                    <span class="nav-icon">💎</span>
+                    <span>Shop</span>
+                    <span class="nav-arrow">→</span>
+                </li>
                 <li class="nav-item" data-tab="leaderboard">
                     <span class="nav-icon">🏆</span>
                     <span>Síň slávy</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="character">
+                    <span class="nav-icon">⚡</span>
+                    <span>Postava</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="tavern">
+                    <span class="nav-icon">🍺</span>
+                    <span>Hospoda</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="blacksmith">
+                    <span class="nav-icon">🔨</span>
+                    <span>Kovář</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="dungeons">
+                    <span class="nav-icon">🏰</span>
+                    <span>Dungeony</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="guilds">
+                    <span class="nav-icon">👥</span>
+                    <span>Guildy</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="friends">
+                    <span class="nav-icon">👫</span>
+                    <span>Přátelé</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="pets">
+                    <span class="nav-icon">🐱</span>
+                    <span>Mazlíčci</span>
+                    <span class="nav-arrow">→</span>
+                </li>
+                <li class="nav-item" data-tab="garden">
+                    <span class="nav-icon">🌱</span>
+                    <span>Zahrada</span>
                     <span class="nav-arrow">→</span>
                 </li>
             </ul>
@@ -155,64 +202,20 @@
                         <!-- Upgrades will be loaded here -->
                     </div>
                 </div>
-                
-                <div class="economy-section">
-                    <h3>💹 Ekonomika</h3>
-                    <div class="economy-grid">
-                        <div class="inflation-card">
-                            <div class="inflation-header">
-                                <span>Inflace Gooncoinu</span>
-                                <span id="inflationTrend" class="inflation-trend trend-flat">↔</span>
-                            </div>
-                            <div class="inflation-rate" id="inflationRate">0.00%</div>
-                            <div class="inflation-meta">
-                                <div>
-                                    <span class="meta-label">Oběh</span>
-                                    <strong id="gooncoinSupply">0</strong>
-                                </div>
-                                <div>
-                                    <span class="meta-label">Cenový multiplikátor</span>
-                                    <strong id="inflationMultiplier">1.00×</strong>
-                                </div>
-                            </div>
-                            <p class="inflation-note">Ceny všech nákupů se upravují podle aktuální inflace.</p>
-                        </div>
-                        <div class="market-card">
-                            <div class="market-header">
-                                <h4>Trh s měnami</h4>
-                                <button id="marketRefreshBtn" class="btn-refresh" title="Aktualizovat kurzy">↻</button>
-                            </div>
-                            <div id="marketRates" class="market-rates">
-                                <p class="muted">Načítám kurzy...</p>
-                            </div>
-                            <div class="market-actions">
-                                <div class="market-field">
-                                    <label for="marketCurrency">Měna</label>
-                                    <select id="marketCurrency">
-                                        <option value="astma">Astma</option>
-                                        <option value="poharky">Pohárky</option>
-                                        <option value="mrkev">Mrkev</option>
-                                        <option value="uzené">Uzené</option>
-                                    </select>
-                                </div>
-                                <div class="market-field">
-                                    <label for="marketAmount">Množství</label>
-                                    <input type="number" id="marketAmount" min="1" step="1" value="1">
-                                </div>
-                                <div class="market-buttons">
-                                    <button id="marketBuyBtn" class="btn-green">Nakoupit</button>
-                                    <button id="marketSellBtn" class="btn-red">Prodat</button>
-                                </div>
-                                <div id="marketMessage" class="market-message"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="tab-content" id="crafting-tab">
                 <h2>⚒️ Výroba Equipment</h2>
                 <div class="crafting-toolbar">
+                    <input type="text" id="craftingSearch" placeholder="Hledej podle názvu nebo slotu" class="crafting-search-input">
+                    <select id="craftingRarityFilter" class="crafting-filter-select">
+                        <option value="all">Všechny rarity</option>
+                        <option value="common">Common</option>
+                        <option value="rare">Rare</option>
+                        <option value="epic">Epic</option>
+                        <option value="legendary">Legendary</option>
+                        <option value="unique">Unique</option>
+                    </select>
                     <div class="crafting-sort">
                         <label for="craftSortSelect">Řadit podle</label>
                         <select id="craftSortSelect">
@@ -238,51 +241,6 @@
                     <div id="craftingDetail" class="crafting-detail">
                         <!-- Detail panel will appear here when item is selected -->
                     </div>
-                </div>
-            </div>
-            
-            <div class="tab-content" id="equipment-tab">
-                <h2>🛡️ Equipment</h2>
-                <div class="equipment-slots">
-                    <div class="equipment-slot" data-slot="weapon">
-                        <div class="slot-label">Zbraň</div>
-                        <div class="slot-content" id="weaponSlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="armor">
-                        <div class="slot-label">Zbroj</div>
-                        <div class="slot-content" id="armorSlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="helmet">
-                        <div class="slot-label">Helma</div>
-                        <div class="slot-content" id="helmetSlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="ring">
-                        <div class="slot-label">Prsten</div>
-                        <div class="slot-content" id="ringSlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="amulet">
-                        <div class="slot-label">Amulet</div>
-                        <div class="slot-content" id="amuletSlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="special">
-                        <div class="slot-label">Speciální</div>
-                        <div class="slot-content" id="specialSlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="accessory">
-                        <div class="slot-label">Doplňky</div>
-                        <div class="slot-content" id="accessorySlot">Prázdné</div>
-                    </div>
-                    <div class="equipment-slot" data-slot="vehicle">
-                        <div class="slot-label">Vozidlo</div>
-                        <div class="slot-content" id="vehicleSlot">Prázdné</div>
-                    </div>
-                </div>
-                
-                <div class="view-others">
-                    <h3>Prohlédnout Equipment ostatních</h3>
-                    <input type="text" id="playerSearch" placeholder="Zadej jméno hráče">
-                    <button id="viewPlayerBtn" class="btn-blue">Zobrazit</button>
-                    <div id="playerEquipmentView"></div>
                 </div>
             </div>
 
@@ -320,18 +278,24 @@
                     <div class="fighter fighter-left" id="combatFighterPlayer">
                         <div class="fighter-name" id="combatPlayerName">Ty</div>
                         <div class="fighter-sprite sprite-left"></div>
-                        <div class="hp-bar"><div class="hp-fill" id="combatPlayerHp"></div></div>
+                        <div class="hp-container">
+                            <div class="hp-bar"><div class="hp-fill" id="combatPlayerHp"></div></div>
+                            <div class="hp-text" id="combatPlayerHpText">HP: 0 / 0</div>
+                        </div>
                     </div>
                     <div class="fighter fighter-right" id="combatFighterEnemy">
                         <div class="fighter-name" id="combatEnemyName">Protivník</div>
                         <div class="fighter-sprite sprite-right"></div>
-                        <div class="hp-bar"><div class="hp-fill" id="combatEnemyHp"></div></div>
+                        <div class="hp-container">
+                            <div class="hp-bar"><div class="hp-fill" id="combatEnemyHp"></div></div>
+                            <div class="hp-text" id="combatEnemyHpText">HP: 0 / 0</div>
+                        </div>
                     </div>
                     <div class="combat-visual-log" id="combatVisualLog">Vyber souboj pro zobrazení animace.</div>
                 </div>
                 <div class="combat-grid">
                     <section class="combat-card">
-                        <h3>📊 Moje statistiky</h3>
+                        <h3>Moje statistiky</h3>
                         <div id="playerCombatStats" class="combat-stats-placeholder">
                             <p class="muted">Načítám bojové statistiky...</p>
                         </div>
@@ -416,8 +380,142 @@
             
             <div class="tab-content" id="buildings-tab">
                 <h2>🏛️ Budovy</h2>
-                <div id="buildingsList" class="buildings-list">
-                    <!-- Buildings will be loaded here -->
+                <div class="buildings-section">
+                    <div class="buildings-filters" id="buildingsFilters">
+                        <button class="buildings-filter-btn active" data-category="all">Vše</button>
+                        <button class="buildings-filter-btn" data-category="production">Výroba</button>
+                        <button class="buildings-filter-btn" data-category="logistics">Logistika</button>
+                        <button class="buildings-filter-btn" data-category="infrastructure">Infrastruktura</button>
+                        <button class="buildings-filter-btn" data-category="support">Podpora</button>
+                    </div>
+                    <div id="buildingsList" class="buildings-list">
+                        <!-- Buildings will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="gems-tab">
+                <h2>💎 Drahokamy</h2>
+                <p class="muted" style="margin-bottom: 20px;">Drahokamy trvale zvyšují atributy postavy. Každý drahokam má 8 úrovní.</p>
+                <div id="gemsList" class="gems-list">
+                    <!-- Gems will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="tab-content" id="economy-tab">
+                <h2>💹 Ekonomika</h2>
+                <div class="economy-section">
+                    <div class="economy-grid">
+                        <div class="inflation-card">
+                            <div class="inflation-header">
+                                <span>Inflace Gooncoinu</span>
+                                <span id="inflationTrend" class="inflation-trend trend-flat">↔</span>
+                            </div>
+                            <div class="inflation-rate" id="inflationRate">0.00%</div>
+                            <div class="inflation-meta">
+                                <div>
+                                    <span class="meta-label">Oběh</span>
+                                    <strong id="gooncoinSupply">0</strong>
+                                </div>
+                                <div>
+                                    <span class="meta-label">Cenový multiplikátor</span>
+                                    <strong id="inflationMultiplier">1.00×</strong>
+                                </div>
+                            </div>
+                            <p class="inflation-note">Ceny všech nákupů se upravují podle aktuální inflace.</p>
+                            
+                            <div class="inflation-controls">
+                                <h4>Kontrola inflace</h4>
+                                <p class="control-description">Investuj Gooncoiny pro snížení inflace. Čím více investuješ, tím větší efekt.</p>
+                                <div class="control-input-group">
+                                    <label for="inflationReductionAmount">Množství Gooncoinů:</label>
+                                    <input type="number" id="inflationReductionAmount" min="1000" step="1000" value="10000" placeholder="Min. 1000">
+                                    <button id="reduceInflationBtn" class="btn-blue">Snížit inflaci</button>
+                                </div>
+                                <div id="inflationReductionPreview" class="reduction-preview">
+                                    <p class="muted">Zadej množství pro zobrazení efektu</p>
+                                </div>
+                                <div id="inflationReductionMessage" class="inflation-message"></div>
+                            </div>
+                        </div>
+                        <div class="market-card">
+                            <div class="market-header">
+                                <h4>Trh s měnami</h4>
+                                <button id="marketRefreshBtn" class="btn-refresh" title="Aktualizovat kurzy">↻</button>
+                            </div>
+                            <div id="marketRates" class="market-rates">
+                                <p class="muted">Načítám kurzy...</p>
+                            </div>
+                            <div class="market-actions">
+                                <div class="market-field">
+                                    <label for="marketCurrency">Měna</label>
+                                    <select id="marketCurrency">
+                                        <option value="astma">Astma</option>
+                                        <option value="poharky">Pohárky</option>
+                                        <option value="mrkev">Mrkev</option>
+                                        <option value="uzené">Uzené</option>
+                                    </select>
+                                </div>
+                                <div class="market-field">
+                                    <label for="marketAmount">Množství</label>
+                                    <input type="number" id="marketAmount" min="1" step="1" value="1">
+                                </div>
+                                <div class="market-buttons">
+                                    <button id="marketBuyBtn" class="btn-green">Nakoupit</button>
+                                    <button id="marketSellBtn" class="btn-red">Prodat</button>
+                                </div>
+                                <div id="marketMessage" class="market-message"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="resource-overview-section">
+                        <div class="resource-overview-card">
+                            <div class="resource-overview-header">
+                                <h4>📦 Přehled zdrojů</h4>
+                                <p class="muted">Zde vidíš odkud všechny zdroje pocházejí</p>
+                            </div>
+                            <div id="resourceOverview" class="resource-overview-list">
+                                <p class="muted">Načítám přehled zdrojů...</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="economy-stats-grid">
+                        <div class="stat-card">
+                            <h4>📊 Ekonomické statistiky</h4>
+                            <div class="stat-item">
+                                <span class="stat-label">Aktuální inflace:</span>
+                                <span class="stat-value" id="statInflationRate">0.00%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Celkový oběh:</span>
+                                <span class="stat-value" id="statTotalSupply">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Cenový multiplikátor:</span>
+                                <span class="stat-value" id="statMultiplier">1.00×</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Minimální inflace:</span>
+                                <span class="stat-value">1.00%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Maximální inflace:</span>
+                                <span class="stat-value">45.00%</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <h4>💡 Tipy</h4>
+                            <ul class="tips-list">
+                                <li>Inflace se automaticky upravuje podle celkového oběhu Gooncoinů</li>
+                                <li>Investování Gooncoinů snižuje inflaci, což snižuje ceny všech nákupů</li>
+                                <li>Čím vyšší inflace, tím dražší jsou všechny nákupy</li>
+                                <li>Trh s měnami reaguje na změny inflace</li>
+                                <li>Pravidelné investice mohou udržet inflaci pod kontrolou</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -465,11 +563,671 @@
                 </div>
             </div>
             
+            <div class="tab-content" id="shop-tab">
+                <h2>💎 Shop</h2>
+                <div class="shop-header">
+                    <div class="gems-display">
+                        <span class="gems-icon">💎</span>
+                        <span class="gems-label">Drahokamy:</span>
+                        <span class="gems-value" id="gemsValue">0</span>
+                    </div>
+                    <div class="active-boosts-display" id="activeBoostsDisplay">
+                        <!-- Active boosts will be shown here -->
+                    </div>
+                </div>
+                <div class="shop-categories">
+                    <button class="shop-category-btn active" data-category="all">Vše</button>
+                    <button class="shop-category-btn" data-category="gems">Drahokamy</button>
+                    <button class="shop-category-btn" data-category="resources">Zdroje</button>
+                    <button class="shop-category-btn" data-category="boosts">Boosty</button>
+                    <button class="shop-category-btn" data-category="keys">Klíče</button>
+                    <button class="shop-category-btn" data-category="special">Speciální</button>
+                </div>
+                <div id="shopItemsList" class="shop-items-grid">
+                    <p class="muted">Načítám shop...</p>
+                </div>
+                <div id="shopMessage" class="shop-message"></div>
+            </div>
+            
             <div class="tab-content" id="leaderboard-tab">
                 <h2>🏆 Síň slávy</h2>
                 <div id="leaderboardList" class="leaderboard-list">
                     <!-- Leaderboard will be loaded here -->
                 </div>
+            </div>
+            
+            <div class="tab-content" id="character-tab">
+                <h2>⚡ Postava</h2>
+                <div class="character-panel-container">
+                    <div class="character-main-panel">
+                        <div class="character-portrait-section">
+                            <div class="character-portrait-frame">
+                                <div class="character-portrait" id="characterPortrait">
+                                    <img src="{{ url_for('images', filename='lugog.png') }}" alt="Character" class="portrait-image">
+                                </div>
+                                <div class="character-name-level">
+                                    <h3 id="characterName">{{ username }}</h3>
+                                    <div class="level-info">
+                                        <span>Level <strong id="characterLevel">1</strong></span>
+                                    </div>
+                                    <div class="class-selector-container" style="margin: 10px 0;">
+                                        <label for="characterClassSelect" style="display: block; margin-bottom: 5px; font-size: 12px; color: #aaa;">Třída:</label>
+                                        <select id="characterClassSelect" class="character-class-select" style="width: 100%; padding: 5px; border-radius: 4px; background: #2a2a2a; color: #fff; border: 1px solid #444;">
+                                            <option value="warrior">⚔️ Warrior - Bojovník</option>
+                                            <option value="mage">🔮 Mage - Mág</option>
+                                            <option value="scout">🏹 Scout - Zvěd</option>
+                                        </select>
+                                        <div id="classDescription" style="margin-top: 5px; font-size: 11px; color: #888; font-style: italic;"></div>
+                                    </div>
+                                    <div class="experience-bar-container">
+                                        <div class="experience-bar">
+                                            <div class="experience-fill" id="experienceFill" style="width: 0%"></div>
+                                        </div>
+                                        <div class="experience-text">
+                                            <span id="currentExp">0</span> / <span id="neededExp">100</span> EXP
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="character-equipment-grid">
+                                <div class="equipment-slot-char" data-slot="helmet" id="charHelmetSlot">
+                                    <div class="slot-icon">⛑️</div>
+                                    <div class="slot-label">HELMA</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="necklace" id="charNecklaceSlot">
+                                    <div class="slot-icon">💎</div>
+                                    <div class="slot-label">NÁHRDELNÍK</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="weapon" id="charWeaponSlot">
+                                    <div class="slot-icon">⚔️</div>
+                                    <div class="slot-label">ZBRAŇ</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="armor" id="charArmorSlot">
+                                    <div class="slot-icon">🛡️</div>
+                                    <div class="slot-label">ZBROJ</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="belt" id="charBeltSlot">
+                                    <div class="slot-icon">🔗</div>
+                                    <div class="slot-label">PÁS</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="ring" id="charRingSlot">
+                                    <div class="slot-icon">💍</div>
+                                    <div class="slot-label">PRSTEN</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="gloves" id="charGlovesSlot">
+                                    <div class="slot-icon">🧤</div>
+                                    <div class="slot-label">RUKAVICE</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="boots" id="charBootsSlot">
+                                    <div class="slot-icon">👢</div>
+                                    <div class="slot-label">BOTY</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="special" id="charSpecialSlot">
+                                    <div class="slot-icon">🍀</div>
+                                    <div class="slot-label">SPECIÁLNÍ</div>
+                                </div>
+                                <div class="equipment-slot-char" data-slot="vehicle" id="charVehicleSlot">
+                                    <div class="slot-icon">🚗</div>
+                                    <div class="slot-label">VOZIDLO</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="character-stats-section">
+                            <div class="stats-header">
+                                <h3>📊 Statistiky</h3>
+                                <div class="available-points-badge" id="availablePointsBadge">
+                                    <span>Dostupné body: <strong id="availablePoints">0</strong></span>
+                                </div>
+                            </div>
+                            
+                            <div class="character-stats-grid">
+                                <div class="stat-row">
+                                    <div class="stat-info">
+                                        <span class="stat-icon">💪</span>
+                                        <div>
+                                            <div class="stat-name">Síla</div>
+                                            <div class="stat-description">Zvyšuje útok</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value" id="statStrength">10</div>
+                                    <button class="stat-upgrade-btn" data-stat="strength" id="upgradeStrength">+</button>
+                                </div>
+                                
+                                <div class="stat-row">
+                                    <div class="stat-info">
+                                        <span class="stat-icon">🎯</span>
+                                        <div>
+                                            <div class="stat-name">Obratnost</div>
+                                            <div class="stat-description">Zvyšuje únik a krit</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value" id="statDexterity">10</div>
+                                    <button class="stat-upgrade-btn" data-stat="dexterity" id="upgradeDexterity">+</button>
+                                </div>
+                                
+                                <div class="stat-row">
+                                    <div class="stat-info">
+                                        <span class="stat-icon">🧠</span>
+                                        <div>
+                                            <div class="stat-name">Inteligence</div>
+                                            <div class="stat-description">Zvyšuje výdělky</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value" id="statIntelligence">10</div>
+                                    <button class="stat-upgrade-btn" data-stat="intelligence" id="upgradeIntelligence">+</button>
+                                </div>
+                                
+                                <div class="stat-row">
+                                    <div class="stat-info">
+                                        <span class="stat-icon">❤️</span>
+                                        <div>
+                                            <div class="stat-name">Odolnost</div>
+                                            <div class="stat-description">Zvyšuje HP a obranu</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value" id="statConstitution">10</div>
+                                    <button class="stat-upgrade-btn" data-stat="constitution" id="upgradeConstitution">+</button>
+                                </div>
+                                
+                                <div class="stat-row">
+                                    <div class="stat-info">
+                                        <span class="stat-icon">🍀</span>
+                                        <div>
+                                            <div class="stat-name">Štěstí</div>
+                                            <div class="stat-description">Zvyšuje krit a únik</div>
+                                        </div>
+                                    </div>
+                                    <div class="stat-value" id="statLuck">10</div>
+                                    <button class="stat-upgrade-btn" data-stat="luck" id="upgradeLuck">+</button>
+                                </div>
+                            </div>
+                            
+                            <div class="combat-stats-display">
+                                <h4>⚔️ Bojové statistiky</h4>
+                                <div class="combat-stats-grid">
+                                    <div class="combat-stat-item">
+                                        <span class="combat-stat-label">Útok:</span>
+                                        <span class="combat-stat-value" id="combatAttack">0</span>
+                                    </div>
+                                    <div class="combat-stat-item">
+                                        <span class="combat-stat-label">Obrana:</span>
+                                        <span class="combat-stat-value" id="combatDefense">0</span>
+                                    </div>
+                                    <div class="combat-stat-item">
+                                        <span class="combat-stat-label">HP:</span>
+                                        <span class="combat-stat-value" id="combatHp">0</span>
+                                    </div>
+                                    <div class="combat-stat-item">
+                                        <span class="combat-stat-label">Únik:</span>
+                                        <span class="combat-stat-value" id="combatEvasion">0%</span>
+                                    </div>
+                                    <div class="combat-stat-item">
+                                        <span class="combat-stat-label">Krit:</span>
+                                        <span class="combat-stat-value" id="combatCrit">0%</span>
+                                    </div>
+                                    <div class="combat-stat-item">
+                                        <span class="combat-stat-label">Štěstí:</span>
+                                        <span class="combat-stat-value" id="combatLuck">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="character-exchange-panel">
+                        <h3>💰 Směna Gooncoinů</h3>
+                        <p class="exchange-description">Drž tlačítko pro kontinuální směnu Gooncoinů za Character Points! Rychlost se postupně zvyšuje.</p>
+                        <div class="exchange-rate-info">
+                            <span>Kurz: <strong>1000 💰 = 1 bod</strong></span>
+                            <span style="margin-left: 15px; font-size: 0.9em; color: #888;">Rychlost se zvyšuje při držení</span>
+                        </div>
+                        <div class="exchange-input-group" style="display: none;">
+                            <label for="exchangeAmount">Množství Gooncoinů:</label>
+                            <input type="number" id="exchangeAmount" min="1000" step="1000" value="1000" placeholder="Min. 1000">
+                            <div class="exchange-preview" id="exchangePreview">
+                                <p class="muted">Získáš: <strong id="pointsPreview">1</strong> bod(ů)</p>
+                            </div>
+                        </div>
+                        <button id="exchangePointsBtn" class="btn-exchange">Drž pro směnu</button>
+                        <div id="exchangeMessage" class="exchange-message"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="tavern-tab">
+                <div class="tavern-header">
+                    <div class="tavern-title-section">
+                        <h2>🍺 Hospoda</h2>
+                        <p class="tavern-subtitle">Přijmi questy a získej odměny za své dobrodružství</p>
+                    </div>
+                </div>
+                
+                <div class="tavern-container">
+                    <div class="tavern-card active-quest-section" id="activeQuestSection">
+                        <div class="card-header-tavern">
+                            <h3>⚡ Aktivní Quest</h3>
+                            <p class="muted">Tvůj aktuální úkol</p>
+                        </div>
+                        <div id="activeQuestDisplay" class="quest-card">
+                            <p class="muted">Žádný aktivní quest</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tavern-card available-quests-section">
+                        <div class="card-header-tavern">
+                            <h3>📋 Dostupné Quests</h3>
+                            <p class="muted">Vyber si nový quest</p>
+                        </div>
+                        <div id="availableQuestsList" class="quests-grid">
+                            <p class="muted">Načítám questy...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="tavern-card mount-section">
+                        <div class="card-header-tavern">
+                            <h3>🐴 Mount (Kůň)</h3>
+                            <p class="muted">Zrychli své cestování</p>
+                        </div>
+                        <div id="mountStatus" class="mount-status">
+                            <p class="muted">Načítám...</p>
+                        </div>
+                        <div id="mountShop" class="mount-shop">
+                            <h4>Koupit koně</h4>
+                            <div id="mountsList"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="tavern-card tavern-activities-section">
+                        <div class="card-header-tavern">
+                            <h3>🎲 Hospodské Aktivity</h3>
+                            <p class="muted">Zábava a bonusy v hospodě</p>
+                        </div>
+                        <div class="tavern-activities-grid">
+                            <div class="tavern-activity-card">
+                                <h4>🍺 Pivo pro sílu</h4>
+                                <p class="muted">Dočasný bonus +10% síly na 30 minut</p>
+                                <p><strong>Cena: 500 Gooncoinů</strong></p>
+                                <button class="btn-blue" onclick="buyTavernBeer('strength')">Koupit pivo</button>
+                            </div>
+                            <div class="tavern-activity-card">
+                                <h4>🎴 Blackjack</h4>
+                                <p class="muted">Interaktivní hra v karty - vyhraješ nebo prohraješ</p>
+                                <p><strong>Sázka: 100-1000 Gooncoinů</strong></p>
+                                <button class="btn-green" onclick="openTavernBlackjack()">Zahrát Blackjack</button>
+                            </div>
+                            <div class="tavern-activity-card">
+                                <h4>🎲 Kostky</h4>
+                                <p class="muted">Házej kostkami a sázej na součet</p>
+                                <p><strong>Sázka: 50-500 Gooncoinů</strong></p>
+                                <button class="btn-purple" onclick="openTavernDice()">Hrát kostky</button>
+                            </div>
+                            <div class="tavern-activity-card">
+                                <h4>🍻 Pivo pro štěstí</h4>
+                                <p class="muted">Dočasný bonus +10% štěstí na 30 minut</p>
+                                <p><strong>Cena: 500 Gooncoinů</strong></p>
+                                <button class="btn-blue" onclick="buyTavernBeer('luck')">Koupit pivo</button>
+                            </div>
+                            <div class="tavern-activity-card">
+                                <h4>🎯 Šipky</h4>
+                                <p class="muted">Zahraj si šipky - získej bonus EXP</p>
+                                <p><strong>Cena: 200 Gooncoinů</strong></p>
+                                <button class="btn-purple" onclick="openTavernDarts()">Hrát šipky</button>
+                            </div>
+                            <div class="tavern-activity-card">
+                                <h4>🎰 Ruleta</h4>
+                                <p class="muted">Sázej na barvu nebo číslo - vyhraješ nebo prohraješ</p>
+                                <p><strong>Sázka: 100-1000 Gooncoinů</strong></p>
+                                <button class="btn-green" onclick="openTavernRoulette()">Zahrát ruletu</button>
+                            </div>
+                            <div class="tavern-activity-card">
+                                <h4>🥚 Skořápky</h4>
+                                <p class="muted">Interaktivní hra - najdi kuličku pod skořápkou</p>
+                                <p><strong>Sázka: 100-500 Gooncoinů</strong></p>
+                                <button class="btn-green" onclick="openTavernShells()">Hrát skořápky</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="blacksmith-tab">
+                <div class="blacksmith-header">
+                    <div class="blacksmith-title-section">
+                        <h2>🔨 Kovář</h2>
+                        <p class="blacksmith-subtitle">Vylepšuj a rozbíjej své vybavení pomocí kovu a duší</p>
+                    </div>
+                </div>
+                
+                <div class="blacksmith-container">
+                    <div class="blacksmith-materials-card">
+                        <div class="card-header-blacksmith">
+                            <h3>📦 Materiály</h3>
+                            <p class="muted">Získáš je rozbíjením itemů</p>
+                        </div>
+                        <div id="blacksmithMaterials" class="materials-display-grid">
+                            <div class="material-card">
+                                <div class="material-icon-wrapper metal-icon">
+                                    <span class="material-icon-large">⚙️</span>
+                                </div>
+                                <div class="material-info">
+                                    <span class="material-label">Kov</span>
+                                    <strong class="material-value" id="metalAmount">0</strong>
+                                </div>
+                            </div>
+                            <div class="material-card">
+                                <div class="material-icon-wrapper souls-icon">
+                                    <span class="material-icon-large">👻</span>
+                                </div>
+                                <div class="material-info">
+                                    <span class="material-label">Duše</span>
+                                    <strong class="material-value" id="soulsAmount">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="blacksmith-actions-grid">
+                        <div class="blacksmith-action-card upgrade-card" style="grid-column: 1 / -1;">
+                            <div class="action-card-header">
+                                <div class="action-icon-wrapper upgrade-icon-wrapper">
+                                    <span class="action-icon">⬆️</span>
+                                </div>
+                                <div>
+                                    <h3>Upgrade Itemu</h3>
+                                    <p class="action-description">Zvyš level svého vybavení</p>
+                                </div>
+                            </div>
+                            <div class="action-card-content">
+                                <div style="margin-bottom: 15px;">
+                                    <label for="blacksmithSearch" class="select-label">🔍 Vyhledávání:</label>
+                                    <input type="text" id="blacksmithSearch" class="action-select" placeholder="Hledat itemy..." style="width: 100%; padding: 8px;">
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label for="blacksmithFilter" class="select-label">🎯 Filtr podle rarity:</label>
+                                    <select id="blacksmithFilter" class="action-select" style="width: 100%;">
+                                        <option value="">Všechny rarity</option>
+                                        <option value="common">Common</option>
+                                        <option value="uncommon">Uncommon</option>
+                                        <option value="rare">Rare</option>
+                                        <option value="epic">Epic</option>
+                                        <option value="legendary">Legendary</option>
+                                    </select>
+                                </div>
+                                <div class="blacksmith-items-container">
+                                    <div id="blacksmithItemsList">
+                                        <p class="muted" style="text-align: center; padding: 20px;">Načítám itemy...</p>
+                                    </div>
+                                </div>
+                                <button id="blacksmithUpgradeBtn" class="btn-upgrade" style="width: 100%;">
+                                    <span>🔨</span>
+                                    <span>Upgradovat vybrané itemy</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="blacksmith-action-card disassemble-card" style="grid-column: 1 / -1;">
+                            <div class="action-card-header">
+                                <div class="action-icon-wrapper disassemble-icon-wrapper">
+                                    <span class="action-icon">💥</span>
+                                </div>
+                                <div>
+                                    <h3>Rozbít Item</h3>
+                                    <p class="action-description">Získej materiály zpět (50%)</p>
+                                </div>
+                            </div>
+                            <div class="action-card-content">
+                                <div style="margin-bottom: 15px;">
+                                    <label for="blacksmithDisassembleSearch" class="select-label">🔍 Vyhledávání:</label>
+                                    <input type="text" id="blacksmithDisassembleSearch" class="action-select" placeholder="Hledat itemy..." style="width: 100%; padding: 8px;">
+                                </div>
+                                <div style="margin-bottom: 15px;">
+                                    <label for="blacksmithDisassembleFilter" class="select-label">Filtr podle rarity:</label>
+                                    <select id="blacksmithDisassembleFilter" class="action-select" style="width: 100%;">
+                                        <option value="">Všechny rarity</option>
+                                        <option value="common">Common</option>
+                                        <option value="uncommon">Uncommon</option>
+                                        <option value="rare">Rare</option>
+                                        <option value="epic">Epic</option>
+                                        <option value="legendary">Legendary</option>
+                                    </select>
+                                </div>
+                                <div style="max-height: 300px; overflow-y: auto; border: 1px solid #444; border-radius: 8px; padding: 10px; margin-bottom: 15px;">
+                                    <div id="blacksmithDisassembleItemsList" style="display: grid; gap: 8px;">
+                                        <p class="muted" style="text-align: center; padding: 20px;">Načítám itemy...</p>
+                                    </div>
+                                </div>
+                                <button id="blacksmithDisassembleBtn" class="btn-disassemble" style="width: 100%;">
+                                    <span>⚡</span>
+                                    <span>Rozbít vybrané itemy</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="dungeons-tab">
+                <div class="dungeons-header">
+                    <div class="dungeons-title-section">
+                        <h2>🏰 Dungeony</h2>
+                        <p class="dungeons-subtitle">Prozkoumej temné jeskyně a poraz mocné bosse</p>
+                    </div>
+                </div>
+                
+                <div class="dungeons-container">
+                    <div id="dungeonsList" class="dungeons-grid">
+                        <p class="muted">Načítám dungeony...</p>
+                    </div>
+                    <div id="dungeonDetail" class="dungeon-detail" style="display: none;">
+                        <h3 id="dungeonDetailName"></h3>
+                        <div id="dungeonDetailContent"></div>
+                        
+                        <!-- Combat Visual for Dungeon -->
+                        <div class="combat-visual dungeon-combat" id="dungeonCombatVisual" style="display: none; margin: 20px 0;">
+                            <div class="fighter fighter-left" id="dungeonFighterPlayer">
+                                <div class="fighter-name" id="dungeonPlayerName">Ty</div>
+                                <div class="fighter-sprite sprite-left"></div>
+                                <div class="hp-container">
+                                    <div class="hp-bar">
+                                        <div class="hp-fill" id="dungeonPlayerHp"></div>
+                                    </div>
+                                    <div class="hp-text" id="dungeonPlayerHpText">100 / 100</div>
+                                </div>
+                            </div>
+                            <div class="fighter fighter-right" id="dungeonFighterEnemy">
+                                <div class="fighter-name" id="dungeonEnemyName">Protivník</div>
+                                <div class="fighter-sprite sprite-right"></div>
+                                <div class="hp-container">
+                                    <div class="hp-bar">
+                                        <div class="hp-fill" id="dungeonEnemyHp"></div>
+                                    </div>
+                                    <div class="hp-text" id="dungeonEnemyHpText">100 / 100</div>
+                                </div>
+                            </div>
+                            <div class="combat-visual-log" id="dungeonCombatVisualLog">Připrav se na boj...</div>
+                        </div>
+                        
+                        <button id="dungeonFightBtn" class="btn-dungeon-fight">Bojovat</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="guilds-tab">
+                <div class="guilds-header">
+                    <div class="guilds-title-section">
+                        <h2>👥 Guildy</h2>
+                        <p class="guilds-subtitle">Spoj se s ostatními a získej bonusy za spolupráci</p>
+                    </div>
+                </div>
+                
+                <div class="guilds-container">
+                    <div class="guilds-card my-guild-section" id="myGuildSection">
+                        <div class="card-header-guilds">
+                            <h3>Moje Guilda</h3>
+                            <p class="muted">Tvá aktuální guilda</p>
+                        </div>
+                        <div id="myGuildDisplay">
+                            <p class="muted">Nejsi v žádné guildě</p>
+                        </div>
+                    </div>
+                    
+                    <div class="guilds-card guilds-list-section">
+                        <div class="card-header-guilds">
+                            <h3>Seznam Guild</h3>
+                            <p class="muted">Připoj se k existující guildě</p>
+                        </div>
+                        <div id="guildsList" class="guilds-grid">
+                            <p class="muted">Načítám guildy...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="guilds-card create-guild-section">
+                        <div class="card-header-guilds">
+                            <h3>Vytvořit Guildu</h3>
+                            <p class="muted">Založ novou guildu</p>
+                        </div>
+                        <div class="create-guild-form">
+                            <input type="text" id="guildNameInput" placeholder="Název guildy" class="guild-input">
+                            <textarea id="guildDescInput" placeholder="Popis" class="guild-textarea"></textarea>
+                            <button id="createGuildBtn" class="btn-guild-create">Vytvořit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="friends-tab">
+                <div class="friends-header">
+                    <div class="friends-title-section">
+                        <h2>👫 Přátelé</h2>
+                        <p class="friends-subtitle">Spravuj své přátele a najdi nové</p>
+                    </div>
+                </div>
+                
+                <div class="friends-container">
+                    <!-- Search for new friends -->
+                    <div class="friends-card search-section">
+                        <div class="card-header-friends">
+                            <h3>Najít přátele</h3>
+                            <p class="muted">Vyhledej uživatele podle jména</p>
+                        </div>
+                        <div class="friends-search-form">
+                            <input type="text" id="friendSearchInput" placeholder="Zadej jméno uživatele..." class="friend-input">
+                            <button id="friendSearchBtn" class="btn-friend-search">Hledat</button>
+                        </div>
+                        <div id="friendSearchResults" class="friends-search-results">
+                            <!-- Search results will appear here -->
+                        </div>
+                    </div>
+                    
+                    <!-- Pending incoming requests -->
+                    <div class="friends-card pending-incoming-section">
+                        <div class="card-header-friends">
+                            <h3>Příchozí žádosti</h3>
+                            <p class="muted" id="pendingIncomingCount">Žádné žádosti</p>
+                        </div>
+                        <div id="pendingIncomingList" class="friends-list">
+                            <p class="muted">Načítám...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Pending outgoing requests -->
+                    <div class="friends-card pending-outgoing-section">
+                        <div class="card-header-friends">
+                            <h3>Odeslané žádosti</h3>
+                            <p class="muted" id="pendingOutgoingCount">Žádné žádosti</p>
+                        </div>
+                        <div id="pendingOutgoingList" class="friends-list">
+                            <p class="muted">Načítám...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Friends list -->
+                    <div class="friends-card friends-list-section">
+                        <div class="card-header-friends">
+                            <h3>Moji přátelé</h3>
+                            <p class="muted" id="friendsCount">0 přátel</p>
+                        </div>
+                        <div id="friendsList" class="friends-list">
+                            <p class="muted">Načítám...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" id="pets-tab">
+                <div class="pets-header">
+                    <div class="pets-title-section">
+                        <h2>🐱 Mazlíčci</h2>
+                        <p class="pets-subtitle">Získej věrné společníky pro své dobrodružství</p>
+                    </div>
+                </div>
+                
+                <div class="pets-container">
+                    <div class="pets-card pets-section">
+                        <div class="card-header-pets">
+                            <h3>📦 Moji Mazlíčci</h3>
+                            <p class="muted">Tvoji aktivní společníci</p>
+                        </div>
+                        <div id="myPetsList" class="pets-grid">
+                            <p class="muted">Zatím nemáš žádné mazlíčky.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pets-card pets-section">
+                        <div class="card-header-pets">
+                            <h3>🛒 Koupit Mazlíčka</h3>
+                            <p class="muted">Rozšiř svou sbírku</p>
+                        </div>
+                        <div class="pets-shop-toolbar">
+                            <select id="petRarityFilter" class="pets-filter-select">
+                                <option value="all">Všechny rarity</option>
+                                <option value="common">Common</option>
+                                <option value="rare">Rare</option>
+                                <option value="epic">Epic</option>
+                                <option value="legendary">Legendary</option>
+                                <option value="unique">Unique</option>
+                            </select>
+                        </div>
+                        <div id="availablePetsList" class="pets-grid">
+                            <p class="muted">Načítám mazlíčky...</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="petsMessage" class="pets-message"></div>
+            </div>
+            
+            <div class="tab-content" id="garden-tab">
+                <div class="garden-header">
+                    <div class="garden-title-section">
+                        <h2>🌱 Zahrada</h2>
+                        <p class="garden-subtitle">Pěstuj ovoce pro své mazlíčky</p>
+                    </div>
+                </div>
+                
+                <div class="garden-container">
+                    <div class="garden-card garden-section garden-plots-section">
+                        <div class="card-header-garden">
+                            <h3>🌾 Moje Záhonky</h3>
+                            <p class="muted">Zasazená semínka</p>
+                        </div>
+                        <div id="gardenPlotsList" class="garden-plots-grid">
+                            <p class="muted">Načítám záhonky...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="garden-card garden-section garden-shop-section">
+                        <div class="card-header-garden">
+                            <h3>🛒 Obchod se Semínky</h3>
+                            <p class="muted">Kupte si semínka za gooncoiny</p>
+                        </div>
+                        <div id="gardenShopList" class="garden-shop-grid">
+                            <p class="muted">Načítám obchod...</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="gardenMessage" class="garden-message"></div>
             </div>
         </main>
         
@@ -510,6 +1268,169 @@
         </aside>
     </div>
     
+    <!-- Quest Waiting Screen Modal -->
+    <div id="questWaitingModal" class="quest-waiting-modal" style="display: none;">
+        <div class="quest-waiting-content">
+            <div class="quest-waiting-header">
+                <h2>⚔️ Quest probíhá...</h2>
+                <button class="close-modal" onclick="closeQuestWaiting()">×</button>
+            </div>
+            <div class="quest-waiting-info">
+                <p id="questWaitingName" class="quest-name"></p>
+                <div class="quest-timer">
+                    <div class="timer-circle">
+                        <span id="questWaitingTimer" class="timer-text">0:00</span>
+                    </div>
+                </div>
+                <p class="quest-message">Počkej, až quest skončí...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tavern Blackjack Modal -->
+    <div id="tavernBlackjackModal" class="gamble-modal" style="display: none;">
+        <div class="gamble-modal-content">
+            <div class="gamble-modal-header">
+                <h2>🎴 Blackjack</h2>
+                <button class="close-modal" onclick="closeTavernBlackjack()">×</button>
+            </div>
+            <div class="gamble-modal-body">
+                <div class="blackjack-setup" id="blackjackSetup">
+                    <label>Sázka (100-1000 Gooncoinů):</label>
+                    <input type="number" id="blackjackBet" min="100" max="1000" value="100" step="50">
+                    <button class="btn-green" onclick="startBlackjack()">Začít hru</button>
+                </div>
+                <div class="blackjack-game" id="blackjackGame" style="display: none;">
+                    <div class="blackjack-dealer">
+                        <h3>Dealer</h3>
+                        <div class="blackjack-cards" id="dealerCards"></div>
+                        <div class="blackjack-total" id="dealerTotal"></div>
+                    </div>
+                    <div class="blackjack-player">
+                        <h3>Tvoje karty</h3>
+                        <div class="blackjack-cards" id="playerCards"></div>
+                        <div class="blackjack-total" id="playerTotal"></div>
+                    </div>
+                    <div class="blackjack-actions" id="blackjackActions">
+                        <button class="btn-green" onclick="blackjackHit()">Hit</button>
+                        <button class="btn-red" onclick="blackjackStand()">Stand</button>
+                    </div>
+                    <div class="blackjack-result" id="blackjackResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tavern Dice Modal -->
+    <div id="tavernDiceModal" class="gamble-modal" style="display: none;">
+        <div class="gamble-modal-content">
+            <div class="gamble-modal-header">
+                <h2>🎲 Kostky</h2>
+                <button class="close-modal" onclick="closeTavernDice()">×</button>
+            </div>
+            <div class="gamble-modal-body">
+                <div class="dice-setup" id="diceSetup">
+                    <label>Sázka (50-500 Gooncoinů):</label>
+                    <input type="number" id="diceBet" min="50" max="500" value="100" step="50">
+                    <label>Hádej součet (2-12):</label>
+                    <input type="number" id="diceGuess" min="2" max="12" value="7">
+                    <button class="btn-purple" onclick="rollDice()">Hodit kostky</button>
+                </div>
+                <div class="dice-result" id="diceResult" style="display: none;">
+                    <div class="dice-display" id="diceDisplay"></div>
+                    <div class="dice-outcome" id="diceOutcome"></div>
+                    <button class="btn-purple" onclick="resetDice()">Hrát znovu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tavern Shells Modal -->
+    <div id="tavernShellsModal" class="gamble-modal" style="display: none;">
+        <div class="gamble-modal-content">
+            <div class="gamble-modal-header">
+                <h2>🥚 Skořápky</h2>
+                <button class="close-modal" onclick="closeTavernShells()">×</button>
+            </div>
+            <div class="gamble-modal-body">
+                <div class="shells-setup" id="shellsSetup">
+                    <label>Sázka (100-500 Gooncoinů):</label>
+                    <input type="number" id="shellsBet" min="100" max="500" value="100" step="50">
+                    <button class="btn-green" onclick="startShellsGame()">Začít hru</button>
+                </div>
+                <div class="shells-game" id="shellsGame" style="display: none;">
+                    <p class="shells-instruction">Sleduj, pod kterou skořápkou je kulička!</p>
+                    <div class="shells-container" id="shellsContainer">
+                        <div class="shell" data-shell="0" onclick="selectShell(0)">
+                            <div class="shell-top">🥚</div>
+                        </div>
+                        <div class="shell" data-shell="1" onclick="selectShell(1)">
+                            <div class="shell-top">🥚</div>
+                        </div>
+                        <div class="shell" data-shell="2" onclick="selectShell(2)">
+                            <div class="shell-top">🥚</div>
+                        </div>
+                    </div>
+                    <div class="shells-result" id="shellsResult"></div>
+                    <button class="btn-green" onclick="resetShells()" id="shellsResetBtn" style="display: none;">Hrát znovu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tavern Darts Modal -->
+    <div id="tavernDartsModal" class="gamble-modal" style="display: none;">
+        <div class="gamble-modal-content">
+            <div class="gamble-modal-header">
+                <h2>🎯 Šipky</h2>
+                <button class="close-modal" onclick="closeTavernDarts()">×</button>
+            </div>
+            <div class="gamble-modal-body">
+                <div class="darts-setup" id="dartsSetup">
+                    <p class="muted">Zahraj si šipky a získej bonus EXP!</p>
+                    <p><strong>Cena: 200 Gooncoinů</strong></p>
+                    <p class="muted">EXP odměna: 50-200 EXP</p>
+                    <button class="btn-purple" onclick="playTavernDarts()">Hrát šipky</button>
+                </div>
+                <div class="darts-result" id="dartsResult" style="display: none;">
+                    <div class="darts-outcome" id="dartsOutcome"></div>
+                    <button class="btn-purple" onclick="resetDarts()">Hrát znovu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tavern Roulette Modal -->
+    <div id="tavernRouletteModal" class="gamble-modal" style="display: none;">
+        <div class="gamble-modal-content">
+            <div class="gamble-modal-header">
+                <h2>🎰 Ruleta</h2>
+                <button class="close-modal" onclick="closeTavernRoulette()">×</button>
+            </div>
+            <div class="gamble-modal-body">
+                <div class="roulette-setup" id="rouletteSetup">
+                    <label>Sázka (100-1000 Gooncoinů):</label>
+                    <input type="number" id="rouletteBet" min="100" max="1000" value="100" step="50">
+                    <label>Typ sázky:</label>
+                    <select id="rouletteBetType" class="roulette-bet-select">
+                        <option value="red">🔴 Červená (2x)</option>
+                        <option value="black">⚫ Černá (2x)</option>
+                        <option value="green">🟢 Zelená/0 (35x)</option>
+                    </select>
+                    <label>Nebo sázej na konkrétní číslo (0-36):</label>
+                    <input type="number" id="rouletteNumber" min="0" max="36" value="0" placeholder="0-36 (35x)">
+                    <button class="btn-green" onclick="spinRoulette()">Roztočit ruletu</button>
+                </div>
+                <div class="roulette-result" id="rouletteResult" style="display: none;">
+                    <div class="roulette-wheel" id="rouletteWheel"></div>
+                    <div class="roulette-outcome" id="rouletteOutcome"></div>
+                    <button class="btn-green" onclick="resetRoulette()">Hrát znovu</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/friends.js') }}"></script>
 </body>
 </html>

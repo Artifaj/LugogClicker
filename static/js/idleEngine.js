@@ -241,7 +241,9 @@
         get potentialPoints() {
             const total = this.game.state.totals.totalGenerated;
             if (total <= 0) return 0;
-            return Math.floor(Math.log10(total));
+            // Require at least 1 million to get any prestige points
+            if (total < 1000000) return 0;
+            return Math.floor(Math.log10(total)) - 5;
         }
 
         get globalMultiplier() {
@@ -512,10 +514,20 @@
 
         startLoops() {
             let last = performance.now();
+            let lastRender = 0;
+            const RENDER_INTERVAL = 100; // Render max 10 times per second instead of 60
+            
             const tick = (now) => {
                 const delta = (now - last) / 1000;
                 last = now;
                 this.update(delta);
+                
+                // Throttle rendering to prevent freezing
+                if (now - lastRender >= RENDER_INTERVAL) {
+                    this.ui.renderAll();
+                    lastRender = now;
+                }
+                
                 requestAnimationFrame(tick);
             };
             requestAnimationFrame(tick);
@@ -531,7 +543,7 @@
                 resource.add(produced);
                 this.state.totals.totalGenerated += produced;
             });
-            this.ui.renderAll();
+            // Removed renderAll() from here - now throttled in startLoops()
         }
 
         handleManualClick() {
@@ -586,7 +598,7 @@
 
     const gameConfig = {
         primaryResource: 'Kolektivní Vůle',
-        manualClickBase: 1,
+        manualClickBase: 0.1,
         prestigePowerPerPoint: 0.08,
         resources: [
             { name: 'Kolektivní Vůle', amount: 0, baseProduction: 0, multiplier: 1 },
@@ -597,39 +609,39 @@
             {
                 name: 'Uliční agitátor',
                 description: 'Sbírá podpisy a zvyšuje základní produkci ideologie.',
-                cost: { resource: 'Kolektivní Vůle', amount: 10 },
-                baseProduction: 0.5,
+                cost: { resource: 'Kolektivní Vůle', amount: 500 },
+                baseProduction: 0.05,
                 amountOwned: 0,
-                costScaling: 1.15,
+                costScaling: 1.25,
                 produces: 'Kolektivní Vůle',
                 unlockRequirement: null
             },
             {
                 name: 'Agrární kooperátor',
                 description: 'Automatizuje zásobování záhonů, tím odemyká Agro poukázky.',
-                cost: { resource: 'Kolektivní Vůle', amount: 60 },
-                baseProduction: 0.8,
+                cost: { resource: 'Kolektivní Vůle', amount: 3000 },
+                baseProduction: 0.08,
                 amountOwned: 0,
-                costScaling: 1.17,
+                costScaling: 1.27,
                 produces: 'Agro Poukázky',
-                unlockRequirement: { resource: 'Kolektivní Vůle', amount: 50 }
+                unlockRequirement: { resource: 'Kolektivní Vůle', amount: 2500 }
             },
             {
                 name: 'Panelový inženýr',
                 description: 'Přepočítává potrubí a vyrábí průmyslové kredity.',
-                cost: { resource: 'Agro Poukázky', amount: 120 },
-                baseProduction: 1.5,
+                cost: { resource: 'Agro Poukázky', amount: 6000 },
+                baseProduction: 0.15,
                 amountOwned: 0,
-                costScaling: 1.2,
+                costScaling: 1.3,
                 produces: 'Průmyslové Kredity',
-                unlockRequirement: { totalGenerated: 500 }
+                unlockRequirement: { totalGenerated: 25000 }
             }
         ],
         upgrades: [
             {
                 name: 'Duplikát letáků',
                 description: 'Zdvojnásobí multiplikátor pro Kolektivní Vůli.',
-                cost: { resource: 'Kolektivní Vůle', amount: 80 },
+                cost: { resource: 'Kolektivní Vůle', amount: 4000 },
                 target: { type: 'resource', name: 'Kolektivní Vůle' },
                 effectType: 'multiply',
                 effectValue: 2,
@@ -638,20 +650,20 @@
             {
                 name: 'Kompostové pásy',
                 description: 'Agrární kooperátoři produkují o 50 % více.',
-                cost: { resource: 'Agro Poukázky', amount: 150 },
+                cost: { resource: 'Agro Poukázky', amount: 7500 },
                 target: { type: 'worker', name: 'Agrární kooperátor' },
                 effectType: 'multiply',
                 effectValue: 1.5,
-                unlockRequirement: { resource: { name: 'Agro Poukázky', generated: 100 } }
+                unlockRequirement: { resource: { name: 'Agro Poukázky', generated: 5000 } }
             },
             {
                 name: 'Tovární rozhlas',
                 description: 'Všechny resources dostanou +0.25 multiplikátoru.',
-                cost: { resource: 'Průmyslové Kredity', amount: 200 },
+                cost: { resource: 'Průmyslové Kredity', amount: 10000 },
                 target: { type: 'all_resources' },
                 effectType: 'add',
                 effectValue: 0.25,
-                unlockRequirement: { totalGenerated: 1500 }
+                unlockRequirement: { totalGenerated: 75000 }
             }
         ]
     };
